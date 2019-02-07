@@ -1,0 +1,4 @@
+SELECT *
+FROM Parts
+WHERE CAST(PartID as CHAR) LIKE %(partid)s
+ORDER BY PartID

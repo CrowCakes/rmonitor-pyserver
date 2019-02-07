@@ -1,0 +1,1 @@
+INSERT INTO Rental(RentalNumber, Status) VALUES (%(rental_number)s, "On Hand");
