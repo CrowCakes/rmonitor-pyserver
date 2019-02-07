@@ -1,3 +1,1 @@
-#!/bin/bash 
-
-python rmonitor-server.py
+nohup python ./rmonitor-server.py 2>&1 &

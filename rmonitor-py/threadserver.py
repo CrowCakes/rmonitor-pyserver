@@ -1,11 +1,13 @@
 import mysql.connector
 import os
+import sys
 import socket
 import threading
 import datetime
 from simple_auth import *
 from controller_functions import *
 from mysql.connector import errorcode
+from mysql.connector import pooling
 
 class ThreadedServer(object):
     def __init__(self, host, port):
@@ -23,19 +25,19 @@ class ThreadedServer(object):
         print_list = {}
         connected_user_list = []
 	
-	dbconfig = {
+        dbconfig = {
                 "database": "PCRental",
                 "user": "user",
                 "password": "sausageinnose",
                 "host": "127.0.0.1"
 	}
-	viewconfig = {
+        viewconfig = {
                 "database": "PCRental",
                 "user": "user",
                 "password": "password",
                 "host": "127.0.0.1"
 	}
-	reportconfig = {
+        reportconfig = {
                 "database": "PCRental",
                 "user": "user",
                 "password": "password",
@@ -45,16 +47,14 @@ class ThreadedServer(object):
         #---------------------------------------------------------
         # Connect to the database
         #---------------------------------------------------------
-	try:
-            cnx = mysql.connector.connect(pool_name = "admin_pool",
-                                          pool_size = 5,
-                                          **dbconfig)
+        try:
+            cnxpool = mysql.connector.connect(pool_name = "admin_pool", pool_size = 5, **dbconfig)
             #cnx = mysql.connector.connect(user='user',
             #                              password='password',
             #                              host='127.0.0.1',
             #                              database='pcrental')
             #cursor = cnx.cursor()
-	    print "Connected to MySQL database"
+            print "Connected to MySQL database"
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -71,17 +71,18 @@ class ThreadedServer(object):
                 client, address = self.sock.accept()
                 #print "Successfully connected to client from ", address
                 #check if connection to mysql closed
-		if not cnx.is_connected():
-			try:
-				cnx = mysql.connector.connect(pool_name = "admin_pool", pool_size = 5, **dbconfig)
-			except mysql.connector.Error as err:
-				if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-					print("Something is wrong with your user name or password")
-				elif err.errno == errorcode.ER_BAD_DB_ERROR:
-					print("Database does not exist")
-				else:
-					print(err)
-		threading.Thread(target = self.listenToClient,args = (client,address,cnx,print_list,connected_user_list)).start()
+		#if not cnx.is_connected():
+		#	try:
+		#		cnx = mysql.connector.connect(pool_name = "admin_pool", pool_size = 5, **dbconfig)
+		#	except mysql.connector.Error as err:
+		#		if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+		#			print("Something is wrong with your user name or password")
+		#		elif err.errno == errorcode.ER_BAD_DB_ERROR:
+		#			print("Database does not exist")
+		#		else:
+		#			print(err)
+                pooled_cnx = mysql.connector.connect(pool_name = "admin_pool")
+                threading.Thread(target = self.listenToClient,args = (client,address,pooled_cnx,print_list,connected_user_list)).start()
 
         # Close the database connection
 	#cursor.close()
@@ -131,21 +132,21 @@ class ThreadedServer(object):
                         for i in connected_list:
                             if login_cred[0] in i:
                                 print "User " + login_cred[0] + " is already logged in!"
-				connected_list.remove(i)
+                                connected_list.remove(i)
 				#duplicate = True
-				break
+                                break
                         connected_list.remove(login_reply.splitlines()[1] + login_cred[0])
                     except ValueError:
                         connected_list.append(login_reply.splitlines()[1] + login_cred[0])
                     else:
                         connected_list.append(login_reply.splitlines()[1] + login_cred[0])
                 # lock released
-		print "New login attempt from " + login_cred[0]
+                print "New login attempt from " + login_cred[0]
 		#print login_reply
-            	print "Current login: " + ", ".join(connected_list)
+                print "Current login: " + ", ".join(connected_list)
 
             else:
-		print "Failed login attempt with credentials " + ", ".join(login_cred)
+                print "Failed login attempt with credentials " + ", ".join(login_cred)
             
             # Access control pending
             connection.sendall(login_reply)
@@ -153,33 +154,12 @@ class ThreadedServer(object):
             #print "Disconnecting now\r\n"
             print "\r\n"
             connection.close()
+		
+            try:
+                cnx.close()
+            except Exception as err:
+                pass
             #--------------------end of loop--------------------------#
-            
-##        elif data == "GetPrint":
-##            # retrieve the client's username
-##            data = get_client_input(connection)
-##            # send the deliveryID back so that PrintUI.java can work
-##            if delivery_print.has_key(data):
-##                connection.sendall(delivery_print[data])
-##            else:
-##                connection.sendall("")
-##            
-##            #print "Disconnecting now\r\n"
-##            connection.close()
-##
-##        elif data == "Print":
-##            # retrieve the client's username
-##            data = get_client_input(connection)
-##            # retrieve the deliveryID to be printed
-##            delivery_id = get_client_input(connection)
-##
-##            # place request in dictionary
-##            # overwrite previous request if there is one
-##            delivery_print[data] = delivery_id
-##            
-##            # if client is placing a request, nothing will fire from the above for loop
-##            #print "Disconnecting now\r\n"
-##            connection.close()
 
         elif data == "UserManagement":
             management_queries = ManagementQueries()
@@ -190,7 +170,7 @@ class ThreadedServer(object):
             user_option = data.strip()
 
             if user_option not in management_queries:
-		print(datetime.datetime.now())
+                print(datetime.datetime.now())
                 print user_option + " is not a valid query. Please copy the query name exactly\r\n"
                 connection.sendall(
                   "Error: That's not a valid query. Please copy the query name exactly")
@@ -265,7 +245,7 @@ class ThreadedServer(object):
                                         'username': insert_data[1],
                                         'old_password': auth_pass[1]}
                     connection.sendall(ChangeQuery(user_option_data, "ChangePassword"))
-		else:
+                else:
                     connection.sendall("Error: database password and your old password don't match")
 
             # generate the hash first before inserting into database
@@ -286,6 +266,11 @@ class ThreadedServer(object):
 
             connection.close()
 
+            try:
+                cnx.close()
+            except Exception as err:
+                pass
+
         else:
             #---------------------------------------------------------
             # Wait for query choice from user client
@@ -298,7 +283,7 @@ class ThreadedServer(object):
 
             # catch invalid query names and quit command
             if user_option not in available_options:
-		print(datetime.datetime.now())
+                print(datetime.datetime.now())
                 print user_option + " is not a valid query. Please copy the query name exactly"
                 connection.sendall(
                   "Error: That's not a valid query. Please copy the query name exactly")
@@ -320,7 +305,9 @@ class ThreadedServer(object):
                     print "User", logout_id, "at", address, "has logged out"
 		   
                     print "Current login: " + ", ".join(connected_list)
-		print "\r\n"
+                print "\r\n"
+                sys.stdout.flush()
+                cnx.close()
                 return
 
             elif user_option in fetch_queries:
@@ -339,7 +326,8 @@ class ThreadedServer(object):
                   user_option == "GetPullOutList" or
                   user_option == "DeletePullOut" or
                   user_option == "DeletePullOutList" or
-                  user_option == "FetchPendingPeripherals"):
+                  user_option == "FetchPendingPeripherals" or
+                  user_option == "DeletePullOutPeripherals"):
                 for i in range(2):
                     data = get_client_input(connection)
                     insert_data.append(data)
@@ -413,7 +401,7 @@ class ThreadedServer(object):
             # Execute the user's query and print its response
             # At this point, no more user input is expected
             #---------------------------------------------------------
-            cursor = cnx.cursor()
+            cursor = cnx.cursor(buffered=True)
             results = ""
 
             #---------------------------------------------------------
@@ -427,28 +415,28 @@ class ThreadedServer(object):
                         user_option_data = {'partid': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
-			print "Error: invalid input on PartID"
+                        print user_option
+                        print "Error: invalid input on PartID"
                         raise Exception("Invalid input on PartID", )
 
-		elif (user_option == "FilterParts" or
+                elif (user_option == "FilterParts" or
                   user_option == "FilterAvailableParts" or
                     user_option == "FilterSmallAccessories"):
                     if validate_int(part_id):
                         user_option_data = {'partid': ("%{}%").format(part_id)}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on PartID"
                         raise Exception("Invalid input on PartID", )
 
-		elif (user_option == "ViewComputerRentalNumber" or
+                elif (user_option == "ViewComputerRentalNumber" or
 			user_option == "FilterAccessories"):
-		    if validate_string(part_id):
+                    if validate_string(part_id):
                         user_option_data = {'rentalnumber': ("%{}%").format(part_id)}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on RentalNumber"
                         raise Exception("Invalid input on RentalNumber", )
 
@@ -459,7 +447,7 @@ class ThreadedServer(object):
                         user_option_data = {'rentalnumber': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on RentalNumber"
                         raise Exception("Invalid input on RentalNumber", )
 
@@ -468,7 +456,7 @@ class ThreadedServer(object):
                         user_option_data = {'rental_number': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on RentalNumber"
                         raise Exception("Invalid input on RentalNumber", )
 
@@ -478,7 +466,7 @@ class ThreadedServer(object):
                         user_option_data = {'name': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on Name"
                         raise Exception("Invalid input on Name", )
 
@@ -498,7 +486,7 @@ class ThreadedServer(object):
                         user_option_data = {'deliveryid': "%{}%".format(part_id)}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on DeliveryID"
                         raise Exception("Invalid input on DeliveryID", )
 
@@ -517,7 +505,7 @@ class ThreadedServer(object):
                         user_option_data = {'deliveryid': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on DeliveryID"
                         raise Exception("Invalid input on DeliveryID", )
 
@@ -526,7 +514,7 @@ class ThreadedServer(object):
                         user_option_data = {'deliveryid': int(part_id)}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on DeliveryID"
                         raise Exception("Invalid input on DeliveryID", )
 
@@ -539,7 +527,7 @@ class ThreadedServer(object):
                         }
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on date"
                         raise Exception("Invalid input on date", )
 
@@ -548,7 +536,7 @@ class ThreadedServer(object):
                         user_option_data = {'date': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on date"
                         raise Exception("Invalid input on date", )
 
@@ -570,7 +558,7 @@ class ThreadedServer(object):
                             cnx.commit()
                             connection.sendall("Successfully completed the operation!")
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on some input"
                         raise Exception("Invalid input", )
                 
@@ -592,7 +580,7 @@ class ThreadedServer(object):
                             cnx.rollback()
                             connection.sendall("Error: please contact administrator")
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on some input"
                         raise Exception("Invalid input", )
 
@@ -619,7 +607,7 @@ class ThreadedServer(object):
                             cnx.rollback()
                             connection.sendall("Error: database could not accept modification")
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on some input"
                         raise Exception("Invalid input", )
 
@@ -642,7 +630,7 @@ class ThreadedServer(object):
                             cnx.rollback()
                             connection.sendall("Error: please contact administrator")
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on some input"
                         raise Exception("Invalid input", )
 
@@ -664,7 +652,7 @@ class ThreadedServer(object):
                             cnx.rollback()
                             connection.sendall("Error: please contact administrator")
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on some input"
                         raise Exception("Invalid input", )
                     
@@ -692,7 +680,7 @@ class ThreadedServer(object):
                             cnx.rollback()
                             connection.sendall("Error: please contact administrator")
                     else:
-			print user_option
+                        print user_option
                         print "Error: invalid input on some input"
                         raise Exception("Invalid input", )
 
@@ -741,7 +729,7 @@ class ThreadedServer(object):
                                                multi=True)
                             cnx.commit()
                             connection.sendall("Successfully completed the operation!")
-			except Exception as err:
+                        except Exception as err:
                             print user_option
                             print(err)
                             cnx.rollback()
@@ -840,13 +828,15 @@ class ThreadedServer(object):
 
 
                 elif user_option == 'InsertNewDelivery':
+                    print "InsertNewDelivery:"
+                    print insert_data
                     if (validate_int(insert_data[0]) and
                         validate_int(insert_data[5]) and
                         validate_int(insert_data[10])):
                         ext = insert_data[10]
-			if ext == '0':
-			    ext = None	
-			user_option_data = {
+                        if ext == '0':
+                            ext = None	
+                        user_option_data = {
                             'deliveryid': insert_data[0],
                             'so': insert_data[1],
                             'si':insert_data[2],
@@ -861,7 +851,7 @@ class ThreadedServer(object):
                             'frequency': insert_data[11]
                             }
                         try:
-			    with self.lock:
+                            with self.lock:
                             	cursor.execute(make_query(user_option+'.sql'), user_option_data)
                             	cnx.commit()
                             	connection.sendall("Successfully completed the operation!")
@@ -883,9 +873,9 @@ class ThreadedServer(object):
                         validate_string(insert_data[10]) and
                         validate_int(insert_data[11])):
                         ext = insert_data[11]
-			if ext == '0':
-			    ext = None
-			user_option_data = {
+                        if ext == '0':
+                            ext = None
+                        user_option_data = {
                             'old_delv_id': insert_data[0],
                             'deliveryid': insert_data[1],
                             'so': insert_data[2],
@@ -901,7 +891,7 @@ class ThreadedServer(object):
                             'frequency': insert_data[12]
                             }
                         try:
-			    with self.lock:
+                            with self.lock:
                             	results = cursor.execute(make_query(user_option+'.sql'),
                                               		 user_option_data,
                                               		 multi=True)
@@ -1006,8 +996,8 @@ class ThreadedServer(object):
                             cnx.rollback()
                             connection.sendall("Error: please contact administrator")
                     else:
-			print user_option
-			print "Error on some input"
+                        print user_option
+                        print "Error on some input"
                         raise Exception("Invalid input", )
 
                 elif user_option == 'EditComputer':
@@ -1069,8 +1059,8 @@ class ThreadedServer(object):
                             cnx.rollback()
                             connection.sendall("Error: please contact administrator")
                     else:
-			print user_option
-			print "Error on some input"
+                        print user_option
+                        print "Error on some input"
                         raise Exception("Invalid input", )
 
                 elif user_option == "DeleteClient":
@@ -1222,7 +1212,7 @@ class ThreadedServer(object):
                         print "Error on some input"
                         raise Exception("Invalid input", )
                 
-		elif user_option == "CompleteDelivery":
+                elif user_option == "CompleteDelivery":
                     if validate_int(part_id):
                         user_option_data = {'deliveryid': part_id}
                         try:
@@ -1311,7 +1301,7 @@ class ThreadedServer(object):
 
                 elif (user_option == "ReportSmallAccessories"):
                     cursor.execute(make_query("ViewSmallAccessories.sql"))
-                
+
                 else:
                     cursor.execute(make_query(user_option+'.sql'))
 
@@ -1319,20 +1309,48 @@ class ThreadedServer(object):
             # Something went wrong with the SQL operation
             #---------------------------------------------------------
             except mysql.connector.Error as err:
-		print(datetime.datetime.now())
+                print(datetime.datetime.now())
+                print "Command processed: " + user_option
+                if not insert_data:
+                    print part_id
+                else:
+                    print insert_data
                 print "Error in SQL operation"
                 print(err)
-		print "\r\n"
+                print "\r\n"
+
+                try:
+                    cursor.fetchall()
+                    #print "Something got stuck in the cursor"
+                except Exception as err:
+                    pass
+    
+                cursor.close()
+                sys.stdout.flush()
                 #connection.sendall("Database error caused operation to fail")
 
             #---------------------------------------------------------
             # Validation detected that a part of the input was bad
             #---------------------------------------------------------
             except Exception as message:
-		print(datetime.datetime.now())
+                print(datetime.datetime.now())
+                print "Command processed: " + user_option
+                if not insert_data:
+                    print part_id
+                else:
+                    print insert_data
                 print "Error in input"
                 print(message)
-		print "\r\n"
+                print "\r\n"
+
+                try:
+                    cursor.fetchall()
+                    #print "Something got stuck in the cursor"
+                except Exception as err:
+                    pass
+
+                cursor.close()
+                sys.stdout.flush()
                 #connection.sendall("Miscellaneous error caused operation to fail")
                 
             #---------------------------------------------------------
@@ -1476,6 +1494,26 @@ class ThreadedServer(object):
             # Disconnect from client to display results
             #---------------------------------------------------------
             #print "Disconnecting now\r\n"
-            cursor.close()
+            try:
+                cursor.fetchall()
+                #print "Something got stuck in the cursor"
+            except Exception as err:
+                pass 
+            try:
+                cursor.close()
+            except Exception as err:
+                print "Couldn't close the cursor"
+
+            try:
+                cnx.close()
+            except Exception as err:
+                pass
+
             connection.close()
+            sys.stdout.flush()
             #--------------------end of loop----------------------------#
+        try:
+            cnx.close()
+        except Exception as err:
+            pass
+        sys.stdout.flush()

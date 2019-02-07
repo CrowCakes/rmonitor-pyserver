@@ -46,7 +46,7 @@ def fetchQueries():
                    "FetchPullOut",
                    "CompleteDelivery",
                    "TraceComputer",
-                   "FetchDeliveryPeripherals"]
+			"FetchDeliveryPeripherals"]
   return fetch_queries
 
 def ManagementQueries():
@@ -465,69 +465,71 @@ def FetchDeliveryPeripherals(sqlcursor, conn):
 #---------------------------------------------------------
 def ReportComputers(sqlcursor, conn):
   query_dir = os.path.dirname(__file__)
-  rel_path = os.path.join("reports", ("Inventory of Computers - {}.csv").format(date.today().strftime("%m-%d-%y")))
+  rel_path = os.path.join("reports", ("InventoryOfComputers-{}.csv").format(date.today().strftime("%m-%d-%y")))
   abs_path = os.path.join(query_dir, rel_path)
   
   with open(abs_path, 'w') as outf:
     outf.write("Rental#, Status, CPU, PC Type, OS, Purchase Date, Is Upgraded, Description, Total Price, Part 1, Name, Type, Part 2, Name, Type, Part 3, Name, Type, Part 4, Name, Type, Part 5, Name, Type, Part 6, Name, Type, Part 7, Name, Type, Part 8, Name, Type, Part 9, Name, Type")
-    conn.sendall("Rental#, Status, CPU, PC Type, OS, Purchase Date, Is Upgraded, Description, Total Price, Part 1, Name, Type, Part 2, Name, Type, Part 3, Name, Type, Part 4, Name, Type, Part 5, Name, Type, Part 6, Name, Type, Part 7, Name, Type, Part 8, Name, Type, Part 9, Name, Type")
+    #conn.sendall("Rental#, Status, CPU, PC Type, OS, Purchase Date, Is Upgraded, Description, Total Price, Part 1, Name, Type, Part 2, Name, Type, Part 3, Name, Type, Part 4, Name, Type, Part 5, Name, Type, Part 6, Name, Type, Part 7, Name, Type, Part 8, Name, Type, Part 9, Name, Type")
     previous = ""
     for (RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, CPrice, PID, Name, PartType, PPrice) in sqlcursor:
       if previous != RentalNumber:
         #print("{}, {}, {}, {}, {}, {}, {}, {}, {}").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, CPrice)
         outf.write(("\n{}, {}, {}, {}, {}, {}, {}, {}").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description))
-        conn.sendall(("\n{}, {}, {}, {}, {}, {}, {}, {}").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description))
+        #conn.sendall(("\n{}, {}, {}, {}, {}, {}, {}, {}").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description))
         previous = RentalNumber
       #print("{}, {}, {}, {}").format(PID, Name, PartType, PPrice)
       outf.write((", {}, {}, {}").format(PID, Name, PartType))
-      conn.sendall((", {}, {}, {}").format(PID, Name, PartType))
+      #conn.sendall((", {}, {}, {}").format(PID, Name, PartType))
 
-  #conn.sendall(("{}\n").format(abs_path))
+  conn.sendall(("{}").format(abs_path))
 
 def ReportParts(sqlcursor, conn):
   query_dir = os.path.dirname(__file__)
-  rel_path = os.path.join("reports", ("Inventory of Parts - {}.csv").format(date.today().strftime("%m-%d-%y")))
+  rel_path = os.path.join("reports", ("InventoryOfParts-{}.csv").format(date.today().strftime("%m-%d-%y")))
   abs_path = os.path.join(query_dir, rel_path)
   
   with open(abs_path, 'w') as outf:
     outf.write("Part ID, Name, Part Type, Status\n")
-    conn.sendall("Part ID, Name, Part Type, Status\n")
+    #conn.sendall("Part ID, Name, Part Type, Status\n")
     for (PartID, Name, PartType, Status, Price) in sqlcursor:
       #print("{}, {}, {}, {}, {}").format(PartID, Name, PartType, Status, Price)
       outf.write(("{}, {}, {}, {}\n").format(PartID, Name, PartType, Status))
-      conn.sendall(("{}, {}, {}, {}\n").format(PartID, Name, PartType, Status))
+      #conn.sendall(("{}, {}, {}, {}\n").format(PartID, Name, PartType, Status))
 
-  #conn.sendall(("{}\n").format(abs_path))
+  conn.sendall(("{}").format(abs_path))
 
 def ReportAccessories(sqlcursor, conn):
   query_dir = os.path.dirname(__file__)
-  rel_path = os.path.join("reports", ("Inventory of Accessories - {}.csv").format(date.today().strftime("%m-%d-%y")))
+  rel_path = os.path.join("reports", ("InventoryOfAccessories-{}.csv").format(date.today().strftime("%m-%d-%y")))
   abs_path = os.path.join(query_dir, rel_path)
   
   with open(abs_path, 'w') as outf:
     outf.write("Rental#, Name, Type, Status\n")
-    conn.sendall("Rental#, Name, Type, Status\n")
+    #conn.sendall("Rental#, Name, Type, Status\n")
     for (Name, AccessoryType, RentalNumber, Status, Price) in sqlcursor:
       #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
       outf.write(("{}, {}, {}, {}\n").format(RentalNumber, Name, AccessoryType, Status))
-      conn.sendall(("{}, {}, {}, {}\n").format(RentalNumber, Name, AccessoryType, Status))
-      
-  #conn.sendall(("{}\n").format(abs_path))
+      #conn.sendall(("{}, {}, {}, {}\n").format(RentalNumber, Name, AccessoryType, Status))
+
+  conn.sendall(("{}").format(abs_path))
 
 def ReportSmallAccessories(sqlcursor, conn):
   query_dir = os.path.dirname(__file__)
-  rel_path = os.path.join("reports", ("Inventory of Small Accessories - {}.csv").format(date.today().strftime("%m-%d-%y")))
+  rel_path = os.path.join("reports", ("InventoryOfSmallAccessories-{}.csv").format(date.today().strftime("%m-%d-%y")))
   abs_path = os.path.join(query_dir, rel_path)
+  #print "ReportSmallAccessories: " + str(abs_path)
   
   with open(abs_path, 'w') as outf:
     outf.write("Name, Type, Total Qty, Qty in Use, Qty Remaining\n")
-    conn.sendall("Name, Type, Total Qty, Qty in Use, Qty Remaining\n")
+    #conn.sendall("Name, Type, Total Qty, Qty in Use, Qty Remaining\n")
     for (Name, AccessoryType, Price, Quantity, Minus) in sqlcursor:
       #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, Price, Quantity, Minus)
-      outf.write(("{}, {}, {}, {}\n").format(Name, AccessoryType, Quantity, Minus, int(Quantity) - int(Minus)))
-      conn.sendall(("{}, {}, {}, {}\n").format(Name, AccessoryType, Quantity, Minus, int(Quantity) - int(Minus)))
+      outf.write(("{}, {}, {}, {}, {}\n").format(Name, AccessoryType, Quantity, Minus, int(Quantity) - int(Minus)))
+      #conn.sendall(("{}, {}, {}, {}, {}\n").format(Name, AccessoryType, Quantity, Minus, int(Quantity) - int(Minus)))
 
-  #conn.sendall(("{}\n").format(abs_path))
+  conn.sendall(("{}").format(abs_path))
+  #print "ReportSmallAccessories: Done!"
 
 #---------------------------------------------------------
 # Handles the multiline query processing of
