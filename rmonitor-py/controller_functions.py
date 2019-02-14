@@ -137,7 +137,7 @@ def get_client_input(socket_connection):
       if stream_data == '\n':
         break
       elif stream_data == '\r':
-        pass
+        pass		
       else:
         data += stream_data
   #print "Received data:", data

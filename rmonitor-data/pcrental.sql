@@ -174,6 +174,7 @@ CREATE TABLE RentalList (
 	ON UPDATE CASCADE 
 	ON DELETE CASCADE
 );
+ALTER TABLE RentalList ADD UNIQUE OneComputerOnly(DeliveryID, RentalNumber);
 
 CREATE TABLE Peripheral (
 	ListId int AUTO_INCREMENT PRIMARY KEY,
