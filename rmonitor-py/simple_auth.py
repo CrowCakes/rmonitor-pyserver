@@ -39,17 +39,13 @@ def authenticate_new(user_cred):
     for (Username, Password, Salt, Role) in cursor:
         # password hash matched
         if (isPassword(user_cred[1], Salt, Password)):
-            # user not already logged in
-            if not check_if_logged(Username, cnx):
-                ChangeQuery({'username': Username}, "SetLoginStatusTrue")
-                result = Role		
+            ChangeQuery({'username': Username}, "SetLoginStatusTrue")
+            result = Role		
 
-                cursor.close()
-                cnx.close()
-                #found a match
-                return "{}\n{}".format(result, make_time_key())
-            else:
-                break
+            cursor.close()
+            cnx.close()
+            #found a match
+            return "{}\n{}".format(result, make_time_key())
 
     cursor.close()
     cnx.close()

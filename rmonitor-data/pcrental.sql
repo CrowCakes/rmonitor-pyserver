@@ -150,7 +150,7 @@ CREATE TABLE Delivery (
 	CustomerID int,
 	ReleaseDate date,
 	DueDate date,
-	AccountManager varchar(10),
+	AccountManager varchar(20),
 	Status varchar(20),
 	ExtensionID int DEFAULT NULL,
 	Comments varchar(255),
