@@ -152,7 +152,7 @@ def get_client_input(socket_connection):
 def ViewParts(sqlcursor, conn):
   for (PartID, Name, PartType, Status, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, PartType, Status, Price)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(PartID, Name, PartType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Price))
 	
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -161,7 +161,7 @@ def ViewParts(sqlcursor, conn):
 def ViewPartsAndQty(sqlcursor, conn):
   for (Name, PartType, Count) in sqlcursor:
     #print("{}, {}, {}").format(Name, PartType, Count)
-    conn.sendall(("{}, {}, {}\n").format(Name, PartType, Count))
+    conn.sendall(("{}::, {}::, {}::\n").format(Name, PartType, Count))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -170,7 +170,7 @@ def ViewPartsAndQty(sqlcursor, conn):
 def ViewOriginalSpecs(sqlcursor, conn):
   for (PartID, Name, PartType, Status, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, PartType, Status, Price)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(PartID, Name, PartType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -179,7 +179,7 @@ def ViewOriginalSpecs(sqlcursor, conn):
 def ViewMonthDeliveryCount(sqlcursor, conn):
   for (Month, Year, Count) in sqlcursor:
     #print("{}, {}, {}").format(Month, Year, Count)
-    conn.sendall(("{}, {}, {}\n").format(Month, Year, Count))
+    conn.sendall(("{}::, {}::, {}::\n").format(Month, Year, Count))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -191,14 +191,14 @@ def ViewDeliverySpecs(sqlcursor, conn):
   for (DeliveryID, RentalNumber, CPU, PCType, OS, Name, PartType) in sqlcursor:
     if previous != DeliveryID:
       #print("{}").format(DeliveryID)
-      conn.sendall(("{}\n").format(DeliveryID))
+      conn.sendall(("{}::\n").format(DeliveryID))
       previous = DeliveryID
     if previous2 != RentalNumber:
       #print("{}, {}, {}, {}").format(RentalNumber, CPU, PCType, OS)
-      conn.sendall(("{}, {}, {}, {}\n").format(RentalNumber, CPU, PCType, OS))
+      conn.sendall(("{}::, {}::, {}::, {}::\n").format(RentalNumber, CPU, PCType, OS))
       previous2 = RentalNumber
     #print("{}, {}").format(Name, PartType)
-    conn.sendall(("{}, {}\n").format(Name, PartType))
+    conn.sendall(("{}::, {}::\n").format(Name, PartType))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -207,7 +207,7 @@ def ViewDeliverySpecs(sqlcursor, conn):
 def ViewDeliveries(sqlcursor, conn):
   for (DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID, Freq) in sqlcursor:
     #print("{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}").format(DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID, Freq)
-    conn.sendall(("{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n").format(DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID, Freq))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::\n").format(DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID, Freq))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -216,7 +216,7 @@ def ViewDeliveries(sqlcursor, conn):
 def ViewComputersStatus(sqlcursor, conn):
   for (RentalNumber, Status) in sqlcursor:
     #print("{}, {}").format(RentalNumber, Status)
-    conn.sendall("{}, {}\n").format(RentalNumber, Status)
+    conn.sendall("{}::, {}::\n").format(RentalNumber, Status)
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the ViewComputers
@@ -227,10 +227,10 @@ def ViewComputers(sqlcursor, conn):
   for (RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, CPrice, PID, Name, PartType, PPrice) in sqlcursor:
     if previous != RentalNumber:
       #print("{}, {}, {}, {}, {}, {}, {}, {}, {}").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, CPrice)
-      conn.sendall(("{}, {}, {}, {}, {}, {}, {}, {}, {}\n").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, CPrice))
+      conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::\n").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, CPrice))
       previous = RentalNumber
     #print("{}, {}, {}, {}").format(PID, Name, PartType, PPrice)
-    conn.sendall(("{}, {}, {}, {}\n").format(PID, Name, PartType, PPrice))
+    conn.sendall(("{}::, {}::, {}::, {}::\n").format(PID, Name, PartType, PPrice))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -239,7 +239,7 @@ def ViewComputers(sqlcursor, conn):
 def ViewAllExtended(sqlcursor, conn):
   for (DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID) in sqlcursor:
     #print("{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}").format(DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID)
-    conn.sendall(("{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}\n").format(DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::\n").format(DeliveryID, Name, SO, SI, ARD, POS, Release, Due, AM, Status, ExtensionID))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -249,7 +249,7 @@ def ViewAllExtended(sqlcursor, conn):
 def ViewAccessoryRentalNumbersByTypes(sqlcursor, conn):
   for (Name, AccessoryType, RentalNumber, Status, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(Name, AccessoryType, RentalNumber, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -258,7 +258,7 @@ def ViewAccessoryRentalNumbersByTypes(sqlcursor, conn):
 def ViewAccessoriesAndQty(sqlcursor, conn):
   for (Name, AccessoryType, Count) in sqlcursor:
     #print("{}, {}, {}").format(Name, AccessoryType, Count)
-    conn.sendall(("{}, {}, {}\n").format(Name, AccessoryType, Count))
+    conn.sendall(("{}::, {}::, {}::\n").format(Name, AccessoryType, Count))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -267,7 +267,7 @@ def ViewAccessoriesAndQty(sqlcursor, conn):
 def FindOnHandParts(sqlcursor, conn):
   for (PartID, Name, AccessoryType, Status, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, AccessoryType, Status, Price)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(PartID, Name, AccessoryType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, AccessoryType, Status, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -276,7 +276,7 @@ def FindOnHandParts(sqlcursor, conn):
 def FindOnHandComputers(sqlcursor, conn):
   for (RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}, {}, {}, {}, {}").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price)
-    conn.sendall(("{}, {}, {}, {}, {}, {}, {}, {}, {}\n").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::\n").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -285,7 +285,7 @@ def FindOnHandComputers(sqlcursor, conn):
 def FindOnHandAccessories(sqlcursor, conn):
   for (RentalNumber, Status, Name, AccessoryType, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(Name, AccessoryType, RentalNumber, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -294,7 +294,7 @@ def FindOnHandAccessories(sqlcursor, conn):
 def FindListIDs(sqlcursor, conn):
   for (ListID, foo) in sqlcursor:
     #print("{}").format(ListID)
-    conn.sendall(("{}\n").format(ListID))
+    conn.sendall(("{}::\n").format(ListID))
 
 
 #---------------------------------------------------------
@@ -304,7 +304,7 @@ def FindListIDs(sqlcursor, conn):
 def FindAvailablei7(sqlcursor, conn):
   for (RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}, {}, {}, {}, {}").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price)
-    conn.sendall(("{}, {}, {}, {}, {}, {}, {}, {}, {}\n").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::, {}::\n").format(RentalNumber, Status, CPU, PCType, OS, PurchaseDate, IsUpgraded, Description, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -313,7 +313,7 @@ def FindAvailablei7(sqlcursor, conn):
 def FetchParts(sqlcursor, conn):
   for (PartID, Name, PartType, Status, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, PartType, Status, Price)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(PartID, Name, PartType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -322,7 +322,7 @@ def FetchParts(sqlcursor, conn):
 def FetchComputers(sqlcursor, conn):
   for (RentalNumber, foo) in sqlcursor:
     #print("{}, {}").format(str(RentalNumber),foo)
-    conn.sendall(("{}\n").format(str(RentalNumber)))
+    conn.sendall(("{}::\n").format(str(RentalNumber)))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -333,10 +333,10 @@ def FetchCompleteComputers(sqlcursor, conn):
   for (RentalNumber, PID, Price) in sqlcursor:
     if previous != RentalNumber:
       #print("{}, {}").format(RentalNumber, Price)
-      conn.sendall(("{}, {}\n").format(RentalNumber, Price))
+      conn.sendall(("{}::, {}::\n").format(RentalNumber, Price))
       previous = RentalNumber
     #print("{}").format(PID)
-    conn.sendall(("{}\n").format(PID))
+    conn.sendall(("{}::\n").format(PID))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -345,7 +345,7 @@ def FetchCompleteComputers(sqlcursor, conn):
 def ViewLatestDeliveryVersion(sqlcursor, conn):
   for (DeliveryID, Extension) in sqlcursor:
     #print("{}, {}").format(DeliveryID, Extension)
-    conn.sendall(("{}, {}\n").format(DeliveryID, Extension))
+    conn.sendall(("{}::, {}::\n").format(DeliveryID, Extension))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -354,7 +354,7 @@ def ViewLatestDeliveryVersion(sqlcursor, conn):
 def ViewClients(sqlcursor, conn):
   for (ClientID, Name, Address, ContactPerson, ContactNumber) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(ClientID, Name, Address, ContactPerson, ContactNumber)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(ClientID, Name, Address, ContactPerson, ContactNumber))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(ClientID, Name, Address, ContactPerson, ContactNumber))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -363,7 +363,7 @@ def ViewClients(sqlcursor, conn):
 def FindClient(sqlcursor, conn):
   for (ID, foo) in sqlcursor:
     #print("{}").format(str(ID))
-    conn.sendall(("{}\n".format(str(ID))))
+    conn.sendall(("{}::\n".format(str(ID))))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -372,7 +372,7 @@ def FindClient(sqlcursor, conn):
 def FindClientContactPerson(sqlcursor, conn):
   for (contact, foo) in sqlcursor:
     #print("{}").format(contact)
-    conn.sendall(("{}\n".format(contact)))
+    conn.sendall(("{}::\n".format(contact)))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -381,7 +381,7 @@ def FindClientContactPerson(sqlcursor, conn):
 def FetchDeliveryAccessories(sqlcursor, conn):
   for (RentalNumber, Status, Name, AccessoryType, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(Name, AccessoryType, RentalNumber, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -390,7 +390,7 @@ def FetchDeliveryAccessories(sqlcursor, conn):
 def ViewPullOuts(sqlcursor, conn):
   for (DeliveryID, FormNumber, DateCreated, Status) in sqlcursor:
     #print("{}, {}, {}, {}").format(DeliveryID, FormNumber, DateCreated, Status)
-    conn.sendall(("{}, {}, {}, {}\n").format(DeliveryID, FormNumber, DateCreated, Status))
+    conn.sendall(("{}::, {}::, {}::, {}::\n").format(DeliveryID, FormNumber, DateCreated, Status))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -399,7 +399,7 @@ def ViewPullOuts(sqlcursor, conn):
 def GetPullOutList(sqlcursor, conn):
   for (DeliveryID, FormNumber, RentalNumber) in sqlcursor:
     #print("{}, {}, {}").format(DeliveryID, FormNumber, RentalNumber)
-    conn.sendall(("{}\n").format(RentalNumber))
+    conn.sendall(("{}::\n").format(RentalNumber))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -408,7 +408,7 @@ def GetPullOutList(sqlcursor, conn):
 def ViewAllLogin(sqlcursor, conn):
   for (Username, Role) in sqlcursor:
     #print("{}, {}").format(Username, Role)
-    conn.sendall(("{}, {}\n").format(Username, Role))
+    conn.sendall(("{}::, {}::\n").format(Username, Role))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -417,7 +417,7 @@ def ViewAllLogin(sqlcursor, conn):
 def ViewLogin(sqlcursor, conn):
   for (Username, Password, Salt, Role) in sqlcursor:
     #print("{}, {}, {}, {}\n").format(Username, Password, Salt, Role)
-    conn.sendall(("{}, {}, {}, {}\n").format(Username, Password, Salt, Role))
+    conn.sendall(("{}::, {}::, {}::, {}::\n").format(Username, Password, Salt, Role))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -436,7 +436,7 @@ def TraceComputer(sqlcursor, conn):
   for (RentalNumber, foo) in sqlcursor:
     #print("{}").format(RentalNumber)
     if RentalNumber:
-      conn.sendall(("{}\n").format(RentalNumber))
+      conn.sendall(("{}::\n").format(RentalNumber))
     else:
       conn.sendall("\n");
     
@@ -447,7 +447,7 @@ def TraceComputer(sqlcursor, conn):
 def ViewSmallAccessories(sqlcursor, conn):
   for (Name, AccessoryType, Price, Quantity, Minus) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, Price, Quantity, Minus)
-    conn.sendall(("{}, {}, {}, {}, {}\n").format(Name, AccessoryType, Price, Quantity, Minus))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, Price, Quantity, Minus))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -456,7 +456,7 @@ def ViewSmallAccessories(sqlcursor, conn):
 def FetchDeliveryPeripherals(sqlcursor, conn):
   for (Name, Quantity) in sqlcursor:
     #print("{}, {}").format(Name, Quantity)
-    conn.sendall(("{}, {}\n").format(Name, Quantity))
+    conn.sendall(("{}::, {}::\n").format(Name, Quantity))
 
 #---------------------------------------------------------
 # Generates CSV files that contain the data from
@@ -543,3 +543,9 @@ def InsertSQL(multi_result, conn):
       cur.fetchall()
       #print(("result: {}").format(cur.fetchall()))
   #conn.sendall("Succcessfully completed the operation!")
+  
+def FlushCursor(sqlcursor):
+  print("Flushing cursor")
+  for line in sqlcursor:
+    print(line)
+  print("\r\n")

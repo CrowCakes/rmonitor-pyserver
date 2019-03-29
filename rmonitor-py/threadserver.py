@@ -828,8 +828,8 @@ class ThreadedServer(object):
 
 
                 elif user_option == 'InsertNewDelivery':
-                    print "InsertNewDelivery:"
-                    print insert_data
+                    #print "InsertNewDelivery:"
+                    #print insert_data
                     if (validate_int(insert_data[0]) and
                         validate_int(insert_data[5]) and
                         validate_int(insert_data[10])):
@@ -854,7 +854,10 @@ class ThreadedServer(object):
                             with self.lock:
                             	cursor.execute(make_query(user_option+'.sql'), user_option_data)
                             	cnx.commit()
-                            	connection.sendall("Successfully completed the operation!")
+								#print "InsertNewDelivery last_insert_id:"
+								#print cursor.lastrowid
+                            	connection.sendall(str(cursor.lastrowid))
+                            	#connection.sendall("Successfully completed the operation!")
                         except Exception as err:
                             print user_option
                             print(err)
@@ -1486,8 +1489,13 @@ class ThreadedServer(object):
                         pass
                     
                 except Exception as message:
-                    print "Error parsing MySQL query results"
-                    print(message)
+					print(datetime.datetime.now())
+					print "Command processed: " + user_option
+					print(message)
+					if not insert_data:
+						print part_id
+					else:
+						print insert_data
                     connection.sendall("Error: couldn't retrieve database entries properly, please contact administrator")
 
             #---------------------------------------------------------

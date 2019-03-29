@@ -47,7 +47,7 @@ CREATE TABLE Client (
 	Name varchar(100),
 	Address varchar(255),
 	ContactPerson varchar(30),
-	ContactNumber int
+	ContactNumber bigint
 );
 
 CREATE TABLE Parts (

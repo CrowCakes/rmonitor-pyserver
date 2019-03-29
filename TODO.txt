@@ -1,25 +1,6 @@
-DeliveryView filter
- - DONE
 PartsForm validation is erroneous
  - TEST
 SUGGESTION: Add "Defective," "Demo," "Rented," "Service" statuses for Computers
  - MORE BUTTONS?
-SUGGESTION: Two columns for printing forms
- - TEST
-SUGGESTION: Case insensitive search for Client name
- - CHANGE QUERY - DONE
- - CHANGE DATA INSERTION - DONE
-SUGGESTION: Projection - Computer status
- - DONE
-Warn user that User Management actions require logout to reflect changes
- - DONE
 
-1/30/2019
-Reports
-- controller_functions - DONE
-- threadserver - DONE
-- querylist - DONE
-- front-end - make functions for buttons
-
-2/4/2019
-Find a way to get the report to download
+Fixed FindClient result parsing in front-end
