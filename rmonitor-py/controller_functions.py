@@ -150,9 +150,9 @@ def get_client_input(socket_connection):
 # ViewParts query
 #---------------------------------------------------------
 def ViewParts(sqlcursor, conn):
-  for (PartID, Name, PartType, Status, Price) in sqlcursor:
+  for (PartID, Name, PartType, Status, Remarks, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, PartType, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Remarks, Price))
 	
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -265,9 +265,9 @@ def ViewAccessoriesAndQty(sqlcursor, conn):
 # FindOnHandParts query
 #---------------------------------------------------------
 def FindOnHandParts(sqlcursor, conn):
-  for (PartID, Name, AccessoryType, Status, Price) in sqlcursor:
+  for (PartID, Name, AccessoryType, Status, Remarks, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, AccessoryType, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, AccessoryType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, AccessoryType, Status, Remarks, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -311,9 +311,9 @@ def FindAvailablei7(sqlcursor, conn):
 # FetchParts, FilterParts, AND FilterAvailableParts query
 #---------------------------------------------------------
 def FetchParts(sqlcursor, conn):
-  for (PartID, Name, PartType, Status, Price) in sqlcursor:
+  for (PartID, Name, PartType, Status, Remarks, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, PartType, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Remarks, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the

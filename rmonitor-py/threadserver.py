@@ -343,7 +343,6 @@ class ThreadedServer(object):
                 #print insert_data
 
             elif (user_option == "InsertNewClient" or
-                  user_option == "InsertNewPart" or
                   user_option == "InsertNewRentalAccessory" or
                   user_option == "InsertNewPullOut" or
                   user_option == "SetPeripheralPending"):
@@ -354,19 +353,15 @@ class ThreadedServer(object):
             
             elif (user_option == "EditClient" or
                   user_option == "EditAccessory" or
-                  user_option == "InsertNewSmallAccessory"):
+                  user_option == "InsertNewSmallAccessory" or
+                  user_option == "InsertNewPart"):
                 for i in range(5):
                     data = get_client_input(connection)
                     insert_data.append(data)
                 #print insert_data
 
-            elif (user_option == "EditPart"):
-                for i in range(6):
-                    data = get_client_input(connection)
-                    insert_data.append(data)
-                #print insert_data
-
-            elif (user_option == "EditSmallAccessory"):
+            elif (user_option == "EditSmallAccessory" or 
+					user_option == "EditPart"):
                 for i in range(7):
                     data = get_client_input(connection)
                     insert_data.append(data)
@@ -641,7 +636,8 @@ class ThreadedServer(object):
                         user_option_data = {'partid': int(insert_data[0]),
                                             'name': insert_data[1],
                                             'type': insert_data[2],
-                                            'price': insert_data[3]}
+											'remarks': insert_data[3],
+                                            'price': insert_data[4]}
                         try:
                             cursor.execute(make_query(user_option+'.sql'), user_option_data)
                             cnx.commit()
@@ -668,7 +664,8 @@ class ThreadedServer(object):
                             'name': insert_data[2],
                             'parttype': insert_data[3],
                             'status': insert_data[4],
-                            'price': insert_data[5]
+							'remarks': insert_data[5],
+                            'price': insert_data[6]
                             }
                         try:
                             cursor.execute(make_query(user_option+'.sql'), user_option_data)

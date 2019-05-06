@@ -55,6 +55,7 @@ CREATE TABLE Parts (
 	Name varchar(100),
 	PartType varchar(20),
 	Status varchar(20),
+	Remarks varchar(100),
 	Price float
 );
 

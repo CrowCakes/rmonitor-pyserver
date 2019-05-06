@@ -1,2 +1,2 @@
-INSERT INTO Parts(Name, PartType, Status, Price)
-VALUES (%(name)s, %(type)s, "On Hand", %(price)s)
+INSERT INTO Parts(Name, PartType, Status, Remarks, Price)
+VALUES (%(name)s, %(type)s, "On Hand", %(remarks)s, %(price)s)
