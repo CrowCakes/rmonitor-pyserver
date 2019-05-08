@@ -414,9 +414,7 @@ class ThreadedServer(object):
                         print "Error: invalid input on PartID"
                         raise Exception("Invalid input on PartID", )
 
-                elif (user_option == "FilterParts" or
-                  user_option == "FilterAvailableParts" or
-                    user_option == "FilterSmallAccessories"):
+                elif (user_option == "FilterAvailableParts"):
                     if validate_int(part_id):
                         user_option_data = {'partid': ("%{}%").format(part_id)}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
@@ -424,11 +422,21 @@ class ThreadedServer(object):
                         print user_option
                         print "Error: invalid input on PartID"
                         raise Exception("Invalid input on PartID", )
+						
+				elif (user_option == "FilterParts" or
+						user_option == "FilterSmallAccessories"):
+                    if validate_string(part_id):
+                        user_option_data = {'partid': part_id}
+                        cursor.execute(make_query(user_option+'.sql'), user_option_data)
+                    else:
+                        print user_option
+                        print "Error: invalid input on PartID"
+                        raise Exception("Invalid input on PartID", )
 
                 elif (user_option == "ViewComputerRentalNumber" or
-			user_option == "FilterAccessories"):
+						user_option == "FilterAccessories"):
                     if validate_string(part_id):
-                        user_option_data = {'rentalnumber': ("%{}%").format(part_id)}
+                        user_option_data = {'rentalnumber': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
                         print user_option
@@ -438,7 +446,7 @@ class ThreadedServer(object):
                 elif (user_option == "ViewRentalUnitHistory" or
                       user_option == "ViewOriginalSpecs" or
                       user_option == "ViewComputerParentDelivery"):
-                    if validate_string(part_id):
+                    if len(part_id) <= 30:
                         user_option_data = {'rentalnumber': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
@@ -447,7 +455,7 @@ class ThreadedServer(object):
                         raise Exception("Invalid input on RentalNumber", )
 
                 elif user_option == "FindListIDs":
-                    if validate_string(part_id):
+                    if len(part_id) <= 30:
                         user_option_data = {'rental_number': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
@@ -457,7 +465,7 @@ class ThreadedServer(object):
 
                 elif (user_option == "ViewClientHistory" or
                       user_option == "FindClientContactPerson"):
-                    if validate_string(part_id):
+                    if len(part_id) <= 100:
                         user_option_data = {'name': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
@@ -466,10 +474,18 @@ class ThreadedServer(object):
                         raise Exception("Invalid input on Name", )
 
                 elif (user_option == "FilterDeliveriesName" or
-                      user_option == "FilterClients" or
                       user_option == "FindClient"):
                     if validate_string(part_id):
                         user_option_data = {'name': "%{}%".format(part_id)}
+                        cursor.execute(make_query(user_option+'.sql'), user_option_data)
+                    else:
+                        print user_option
+                        print "Error: invalid input on Name"
+                        raise Exception("Invalid input on Name", )
+						
+				elif (user_option == "FilterClients"):
+                    if validate_string(part_id):
+                        user_option_data = {'name': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
                         print user_option
@@ -515,6 +531,7 @@ class ThreadedServer(object):
 
                 elif user_option == "ViewMonthHistory":
                     if (validate_int(insert_data[0]) and
+						len(insert_data[1]) == 4 and
                         validate_int(insert_data[1])):
                         user_option_data = {
                           'month': insert_data[0],
@@ -527,7 +544,7 @@ class ThreadedServer(object):
                         raise Exception("Invalid input on date", )
 
                 elif user_option == "Projection":
-                    if validate_date(part_id):
+                    if len(part_id) == 10:
                         user_option_data = {'date': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
@@ -541,9 +558,9 @@ class ThreadedServer(object):
                       user_option == "DeletePullOut" or
                       user_option == "DeletePullOutList" or
                       user_option == "FetchPendingPeripherals" or
-			user_option == "DeletePullOutPeripherals"):
+						user_option == "DeletePullOutPeripherals"):
                     if (validate_int(insert_data[0]) and
-                        validate_string(insert_data[1])):
+                        len(insert_data[1]) <= 20):
                         user_option_data = {'deliveryid': insert_data[0],
                                             'formnumber': insert_data[1]}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
@@ -559,8 +576,9 @@ class ThreadedServer(object):
                 
                 elif (user_option == "InsertNewPullOut"):
                     if (validate_int(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[3])):
+                        len(insert_data[1]) <= 20 and
+						len(insert_data[2]) == 10 and
+                        len(insert_data[3]) <= 20):
                         user_option_data = {'deliveryid': insert_data[0],
                                             'formnumber': insert_data[1],
                                             'datecreated': insert_data[2],
@@ -582,8 +600,8 @@ class ThreadedServer(object):
                 elif (user_option == "InsertPullOutListItem" or
                       user_option == "DeletePullOutListItem"):
                     if (validate_int(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2])):
+                        len(insert_data[1]) <= 20 and
+                        len(insert_data[2]) <= 30):
                         user_option_data = {'deliveryid': insert_data[0],
                                             'formnumber': insert_data[1],
                                             'rentalnumber': insert_data[2]}
@@ -607,10 +625,10 @@ class ThreadedServer(object):
                         raise Exception("Invalid input", )
 
                 elif user_option == 'InsertNewClient':
-                    if (validate_string(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2]) and
-                        validate_int(insert_data[3])):
+                    if (len(insert_data[0]) <= 100 and
+                        len(insert_data[1]) <= 255 and
+                        len(insert_data[2]) <= 30 and
+                        str.isdigit(insert_data[3])):
                         user_option_data = (insert_data[0],
                                           insert_data[1],
                                           insert_data[2],
@@ -631,8 +649,9 @@ class ThreadedServer(object):
 
                 elif user_option == 'InsertNewPart':
                     if (validate_int(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2])):
+                        len(insert_data[1]) <= 100 and
+                        len(insert_data[2]) <= 20 and
+						len(insert_data[3]) <= 100):
                         user_option_data = {'partid': int(insert_data[0]),
                                             'name': insert_data[1],
                                             'type': insert_data[2],
@@ -655,9 +674,10 @@ class ThreadedServer(object):
                 elif user_option == 'EditPart':
                     if (validate_int(insert_data[0]) and
                         validate_int(insert_data[1]) and
-                        validate_string(insert_data[2]) and
-                        validate_string(insert_data[3]) and
-                        validate_string(insert_data[4])):
+                        len(insert_data[2]) <= 100 and
+                        len(insert_data[3]) <= 20 and
+                        len(insert_data[4]) <= 20 and
+						len(insert_data[5]) <= 100):
                         user_option_data = {
                             'old_part': insert_data[0],
                             'partid': insert_data[1],
@@ -682,10 +702,10 @@ class ThreadedServer(object):
                         raise Exception("Invalid input", )
 
                 elif user_option == 'EditClient':
-                    if (validate_string(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2]) and
-                        validate_string(insert_data[3]) and
+                    if (len(insert_data[0]) <= 100 and
+                        len(insert_data[1]) <= 100 and
+                        len(insert_data[2]) <= 255 and
+                        len(insert_data[3]) <= 30 and
                         validate_int(insert_data[4])):
                         user_option_data = {
                             'old_name': insert_data[0],
@@ -709,10 +729,10 @@ class ThreadedServer(object):
                         raise Exception("Invalid input", )
 
                 elif user_option == 'EditAccessory':
-                    if (validate_string(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2]) and
-                        validate_string(insert_data[3])):
+                    if (len(insert_data[0]) <= 30 and
+                        len(insert_data[1]) <= 30 and
+                        len(insert_data[2]) <= 100 and
+                        len(insert_data[3]) <= 50):
                         user_option_data = {
                             'old_rental': insert_data[0],
                             'rental_number': insert_data[1],
@@ -737,9 +757,9 @@ class ThreadedServer(object):
                         raise Exception("Invalid input", )
 
                 elif user_option == 'InsertNewRentalAccessory':
-                    if (validate_string(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2])):
+                    if (len(insert_data[0]) <= 30 and
+                        len(insert_data[1]) <= 100 and
+                        len(insert_data[2]) <= 50):
                         user_option_data = {
                             'rental_number': insert_data[0],
                             'name': insert_data[1],
@@ -771,7 +791,9 @@ class ThreadedServer(object):
                         raise Exception("Invalid input", )
 
                 elif user_option == 'InsertNewSmallAccessory':
-                    if (validate_int(insert_data[3]) and
+                    if (len(insert_data[0]) <= 100 and
+						len(insert_data[1]) <= 50 and
+						validate_int(insert_data[3]) and
                         validate_int(insert_data[4])
                         ):
                         user_option_data = {
@@ -797,7 +819,9 @@ class ThreadedServer(object):
 
 
                 elif user_option == 'EditSmallAccessory':
-                    if (validate_int(insert_data[5]) and
+                    if (len(insert_data[2]) <= 100 and
+						len(insert_data[3]) <= 50 and
+						validate_int(insert_data[5]) and
                         validate_int(insert_data[6])
                         ):
                         user_option_data = {
@@ -828,7 +852,15 @@ class ThreadedServer(object):
                     #print "InsertNewDelivery:"
                     #print insert_data
                     if (validate_int(insert_data[0]) and
+						len(insert_data[1]) <= 30 and
+						len(insert_data[2]) <= 30 and
+						len(insert_data[3]) <= 30 and
+						len(insert_data[4]) <= 30 and
                         validate_int(insert_data[5]) and
+						len(insert_data[6]) == 10 and
+						len(insert_data[7]) == 10 and
+						len(insert_data[8]) <= 20 and
+						len(insert_data[9]) <= 20 and
                         validate_int(insert_data[10])):
                         ext = insert_data[10]
                         if ext == '0':
@@ -869,8 +901,15 @@ class ThreadedServer(object):
                 elif user_option == 'EditDelivery':
                     if (validate_int(insert_data[0]) and
                         validate_int(insert_data[1]) and
+						len(insert_data[2]) <= 30 and
+						len(insert_data[3]) <= 30 and
+						len(insert_data[4]) <= 30 and
+						len(insert_data[5]) <= 30 and
                         validate_int(insert_data[6]) and
-                        validate_string(insert_data[10]) and
+						len(insert_data[7]) == 10 and
+						len(insert_data[8]) == 10 and
+						len(insert_data[9]) <= 20 and
+						len(insert_data[10]) <= 20 and
                         validate_int(insert_data[11])):
                         ext = insert_data[11]
                         if ext == '0':
@@ -910,7 +949,7 @@ class ThreadedServer(object):
                 elif (user_option == 'InsertDeliverySpecs' or
                       user_option == 'InsertDeliveryAccessories'):
                     if (validate_int(insert_data[0]) and
-                        validate_string(insert_data[1])):
+                        len(insert_data[1]) <= 30):
                         user_option_data = {
                           'deliveryid': insert_data[0],
                           'rentalnumber': insert_data[1]
@@ -948,11 +987,11 @@ class ThreadedServer(object):
                         connection.sendall("Error: please contact administrator")
 
                 elif user_option == 'InsertNewRentalComputer':
-                    if (validate_string(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2]) and
-                        validate_string(insert_data[3]) and
-                        validate_string(insert_data[4]) and
+                    if (len(insert_data[0]) <= 30 and
+                        len(insert_data[1]) <= 10 and
+                        len(insert_data[2]) <= 10 and
+                        len(insert_data[3]) <= 30 and
+                        len(insert_data[4]) == 10 and
                         validate_int(insert_data[8]) and
                         validate_int(insert_data[9]) and
                         validate_int(insert_data[10]) and
@@ -1001,12 +1040,12 @@ class ThreadedServer(object):
                         raise Exception("Invalid input", )
 
                 elif user_option == 'EditComputer':
-                    if (validate_string(insert_data[0]) and
-                        validate_string(insert_data[1]) and
-                        validate_string(insert_data[2]) and
-                        validate_string(insert_data[3]) and
-                        validate_string(insert_data[4]) and
-                        validate_string(insert_data[5]) and
+                    if (len(insert_data[0]) <= 30 and
+                        len(insert_data[1]) <= 30 and
+                        len(insert_data[2]) <= 10 and
+                        len(insert_data[3]) <= 10 and
+                        len(insert_data[4]) <= 30 and
+                        len(insert_data[5]) == 10 and
                         validate_int(insert_data[9]) and
                         validate_int(insert_data[10]) and
                         validate_int(insert_data[11]) and

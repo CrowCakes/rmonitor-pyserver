@@ -1,2 +1,2 @@
 SELECT * FROM Client
-WHERE Name LIKE %(name)s
+WHERE Name REGEXP %(name)s

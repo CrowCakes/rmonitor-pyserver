@@ -1,4 +1,4 @@
 SELECT *
 FROM SmallAccessory
-WHERE Name LIKE %(partid)s
+WHERE Name REGEXP %(partid)s
 ORDER BY Name

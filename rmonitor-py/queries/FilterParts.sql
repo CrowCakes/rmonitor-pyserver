@@ -1,4 +1,4 @@
 SELECT *
 FROM Parts
-WHERE CAST(PartID as CHAR) LIKE %(partid)s
+WHERE CAST(PartID as CHAR) REGEXP %(partid)s
 ORDER BY PartID

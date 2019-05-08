@@ -9,5 +9,5 @@ INNER JOIN ParentList L
 ON P.PartListID = L.ListID 
 INNER JOIN Parts R 
 ON L.PartID = R.PartID
-WHERE C.RentalNumber LIKE %(rentalnumber)s
+WHERE C.RentalNumber REGEXP %(rentalnumber)s
 ORDER BY C.RentalNumber, R.PartID ASC
