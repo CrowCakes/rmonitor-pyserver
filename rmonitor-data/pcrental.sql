@@ -89,6 +89,7 @@ CREATE TABLE Accessory (
 	RentalNumber varchar(30) PRIMARY KEY,
 	Name varchar(100),
 	AccessoryType varchar(50),
+	Remarks varchar(255),
 	Price float,
 	
 	FOREIGN KEY (RentalNumber) REFERENCES Rental (RentalNumber)

@@ -12,6 +12,7 @@ ViewMonthDeliveryCount
 ViewLatestDeliveryVersion
 ViewDeliverySpecs
 ViewDeliveries
+ViewCPUQtyUnavailable
 ViewCPUQty
 ViewComptuersStatus
 ViewComputers
@@ -48,6 +49,7 @@ InsertDeliverySpecs
 InsertDeliveryPeripherals
 InsertDeliveryAccessories
 GetPullOutList
+FindOriginalComputer
 FindOnHandParts
 FindOnHandComputers
 FindOnHandAccessories
@@ -61,6 +63,7 @@ FilterSmallAccessories
 FilterParts
 FilterDeliveriesName
 FilterDeliveries
+FilterClients
 FilterAvailableParts
 FilterAccessories
 FetchPulledDeliveryAccessories

@@ -99,7 +99,7 @@ class ThreadedServer(object):
         fetch_queries = fetchQueries()
 
         data = get_client_input(connection)
-	#print data	
+		#print data	
 
         # Each of the conditional statements except 'else' detect a 'keyword'
         # 'else' detects a query
@@ -343,7 +343,6 @@ class ThreadedServer(object):
                 #print insert_data
 
             elif (user_option == "InsertNewClient" or
-                  user_option == "InsertNewRentalAccessory" or
                   user_option == "InsertNewPullOut" or
                   user_option == "SetPeripheralPending"):
                 for i in range(4):
@@ -352,10 +351,16 @@ class ThreadedServer(object):
                 #print insert_data
             
             elif (user_option == "EditClient" or
-                  user_option == "EditAccessory" or
-                  user_option == "InsertNewSmallAccessory" or
-                  user_option == "InsertNewPart"):
+					user_option == "InsertNewRentalAccessory" or
+					user_option == "InsertNewSmallAccessory" or
+					user_option == "InsertNewPart"):
                 for i in range(5):
+                    data = get_client_input(connection)
+                    insert_data.append(data)
+                #print insert_data
+				
+			elif (user_option == "EditAccessory"):
+				for i in range(6):
                     data = get_client_input(connection)
                     insert_data.append(data)
                 #print insert_data
@@ -405,7 +410,8 @@ class ThreadedServer(object):
             #---------------------------------------------------------
             try:
                 if (user_option == "FetchParts" or
-                    user_option == "TraceComputer"):
+                    user_option == "TraceComputer" or
+                    user_option == "FindOriginalComputer"):
                     if validate_int(part_id):
                         user_option_data = {'partid': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
@@ -738,7 +744,8 @@ class ThreadedServer(object):
                             'rental_number': insert_data[1],
                             'name': insert_data[2],
                             'acctype': insert_data[3],
-                            'price': insert_data[4]
+							'remarks': insert_data[4],
+                            'price': insert_data[5]
                             }
                         try:
                             results = cursor.execute(make_query(user_option+'.sql'),
@@ -764,7 +771,8 @@ class ThreadedServer(object):
                             'rental_number': insert_data[0],
                             'name': insert_data[1],
                             'acctype': insert_data[2],
-                            'price': insert_data[3]
+							'remarks': insert_data[3],
+                            'price': insert_data[4]
                             }
                         try:
                             rental_number = {'rental_number': insert_data[0]}
@@ -1433,13 +1441,16 @@ class ThreadedServer(object):
                         ViewDeliveries(cursor, connection)
                     elif user_option == 'ViewUrgentPull':
                         ViewDeliveries(cursor, connection)
-                    elif user_option == 'ViewAccessoryRentalNumbersByTypes':
+                    elif (user_option == 'ViewAccessoryRentalNumbersByTypes' or
+							user_option == 'FilterAccessories'):
                         ViewAccessoryRentalNumbersByTypes(cursor, connection)
                     elif user_option == 'ViewAccessoriesAndQty':
                         ViewAccessoriesAndQty(cursor, connection)
                     elif user_option == 'FindOnHandParts':
                         FindOnHandParts(cursor, connection)
-                    elif user_option == 'FindOnHandComputers' or user_option == 'Projection':
+                    elif (user_option == 'FindOnHandComputers' or 
+							user_option == 'Projection' or
+							user_option == 'FindOriginalComputer'):
                         FindOnHandComputers(cursor, connection)
                     elif user_option == 'FindOnHandAccessories':
                         FindOnHandAccessories(cursor, connection)
@@ -1463,8 +1474,6 @@ class ThreadedServer(object):
                           user_option == 'FetchPendingDeliveryAccessories' or
                           user_option == 'ViewPullOutListAcc'):
                         FetchDeliveryAccessories(cursor, connection)
-                    elif user_option == 'FilterAccessories':
-                        ViewAccessoryRentalNumbersByTypes(cursor, connection)
                     elif user_option == 'FilterParts' or user_option == 'FilterAvailableParts':
                         FetchParts(cursor, connection)
                     elif user_option == 'ViewLatestDeliveryVersion':
@@ -1480,7 +1489,8 @@ class ThreadedServer(object):
                         ViewPullOuts(cursor, connection)
                     elif user_option == 'GetPullOutList':
                         GetPullOutList(cursor, connection)
-                    elif user_option == 'ViewCPUQty':
+                    elif (user_option == 'ViewCPUQty' or
+							user_option == 'ViewCPUQtyUnavailable'):
                         ViewCPUQty(cursor, connection)
                     elif user_option == 'TraceComputer':
                         TraceComputer(cursor, connection)

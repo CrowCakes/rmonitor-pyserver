@@ -46,7 +46,8 @@ def fetchQueries():
                    "FetchPullOut",
                    "CompleteDelivery",
                    "TraceComputer",
-			"FetchDeliveryPeripherals"]
+					"FetchDeliveryPeripherals",
+					"FindOriginalComputer"]
   return fetch_queries
 
 def ManagementQueries():
@@ -168,9 +169,9 @@ def ViewPartsAndQty(sqlcursor, conn):
 # ViewOriginalSpecs query
 #---------------------------------------------------------
 def ViewOriginalSpecs(sqlcursor, conn):
-  for (PartID, Name, PartType, Status, Price) in sqlcursor:
+  for (PartID, Name, PartType, Status, Remarks, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(PartID, Name, PartType, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::\n").format(PartID, Name, PartType, Status, Remarks, Price))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -247,9 +248,9 @@ def ViewAllExtended(sqlcursor, conn):
 # query
 #---------------------------------------------------------
 def ViewAccessoryRentalNumbersByTypes(sqlcursor, conn):
-  for (Name, AccessoryType, RentalNumber, Status, Price) in sqlcursor:
+  for (Name, AccessoryType, RentalNumber, Status, Price, Remarks) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price, Remarks))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the

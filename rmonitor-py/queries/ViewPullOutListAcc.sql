@@ -1,4 +1,4 @@
-SELECT B.RentalNumber, R.Status, A.Name, A.AccessoryType, A.Price
+SELECT B.RentalNumber, R.Status, A.Name, A.AccessoryType, A.Remarks, A.Price
 FROM PullOut O
 INNER JOIN PullOutList B
 ON (O.DeliveryID = B.DeliveryID AND O.FormNumber = B.FormNumber)

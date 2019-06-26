@@ -3,4 +3,4 @@ SELECT DeliveryID,
 	DateCreated,
 	Status
 FROM PullOut
-ORDER BY DeliveryID, DateCreated ASC
+ORDER BY DateCreated DESC

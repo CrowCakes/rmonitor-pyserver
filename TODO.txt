@@ -1,6 +1,0 @@
-PartsForm validation is erroneous
- - TEST
-SUGGESTION: Add "Defective," "Demo," "Rented," "Service" statuses for Computers
- - MORE BUTTONS?
-
-Fixed FindClient result parsing in front-end
