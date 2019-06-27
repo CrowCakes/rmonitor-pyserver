@@ -284,9 +284,9 @@ def FindOnHandComputers(sqlcursor, conn):
 # FindOnHandAccessories query
 #---------------------------------------------------------
 def FindOnHandAccessories(sqlcursor, conn):
-  for (RentalNumber, Status, Name, AccessoryType, Price) in sqlcursor:
+  for (RentalNumber, Status, Name, AccessoryType, Remarks, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price, Remarks))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
@@ -380,9 +380,9 @@ def FindClientContactPerson(sqlcursor, conn):
 # FetchDeliveryAccessories query
 #---------------------------------------------------------
 def FetchDeliveryAccessories(sqlcursor, conn):
-  for (RentalNumber, Status, Name, AccessoryType, Price) in sqlcursor:
+  for (RentalNumber, Status, Name, AccessoryType, Remarks, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price, Remarks))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
