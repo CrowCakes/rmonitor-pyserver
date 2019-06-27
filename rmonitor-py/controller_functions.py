@@ -382,7 +382,7 @@ def FindClientContactPerson(sqlcursor, conn):
 def FetchDeliveryAccessories(sqlcursor, conn):
   for (RentalNumber, Status, Name, AccessoryType, Remarks, Price) in sqlcursor:
     #print("{}, {}, {}, {}, {}").format(Name, AccessoryType, RentalNumber, Status, Price)
-    conn.sendall(("{}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price, Remarks))
+    conn.sendall(("{}::, {}::, {}::, {}::, {}::, {}::\n").format(Name, AccessoryType, RentalNumber, Status, Price, Remarks))
 
 #---------------------------------------------------------
 # Display the pretty(?) results of the
