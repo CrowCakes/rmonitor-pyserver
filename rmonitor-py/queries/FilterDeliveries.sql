@@ -4,5 +4,5 @@ D.ReleaseDate, D.DueDate, D.AccountManager,
 D.Status, D.ExtensionID, D.Frequency
 FROM Delivery D, Client C
 WHERE D.CustomerID = C.ClientID
-AND D.DeliveryID LIKE %(deliveryid)s
+AND D.DeliveryID REGEXP %(deliveryid)s OR C.Name REGEXP %(deliveryid)s OR D.SalesOrder REGEXP %(deliveryid)s
 ORDER BY D.DeliveryID

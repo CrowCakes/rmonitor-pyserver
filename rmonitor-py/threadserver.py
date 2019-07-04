@@ -500,7 +500,7 @@ class ThreadedServer(object):
 
                 elif (user_option == "FilterDeliveries"):
                     if validate_int(part_id):
-                        user_option_data = {'deliveryid': "%{}%".format(part_id)}
+                        user_option_data = {'deliveryid': part_id}
                         cursor.execute(make_query(user_option+'.sql'), user_option_data)
                     else:
                         print user_option
