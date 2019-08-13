@@ -6,5 +6,5 @@ INNER JOIN Rental R
 ON L.RentalNumber = R.RentalNumber
 INNER JOIN Accessory A
 ON R.RentalNumber = A.RentalNumber
-WHERE D.DeliveryID = %(deliveryid)s AND R.Status = "Unavailable"
+WHERE D.DeliveryID = %(deliveryid)s AND R.Status = "Rental"
 ORDER BY R.RentalNumber ASC

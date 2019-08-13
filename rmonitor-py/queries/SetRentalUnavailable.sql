@@ -1,3 +1,3 @@
 UPDATE Rental
-SET Status = "Unavailable"
+SET Status = "Rental"
 WHERE RentalNumber = %(rentalnumber)s

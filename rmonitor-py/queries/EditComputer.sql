@@ -12,6 +12,19 @@ Description = %(description)s,
 Price = %(price)s
 WHERE RentalNumber = %(rental_number)s;
 
+UPDATE Rental A 
+INNER JOIN Computer B
+ON A.RentalNumber = B.RentalNumber
+SET A.Status = "On Hand"
+WHERE B.Description NOT LIKE "%DEFECT%" 
+AND B.Description NOT LIKE "%DONATE%" 
+AND A.RentalNumber NOT IN 
+	(SELECT RentalList.RentalNumber 
+	FROM RentalList 
+	INNER JOIN Delivery 
+	ON RentalList.DeliveryID = Delivery.DeliveryID 
+	WHERE Delivery.Status = "Active");
+
 UPDATE Parts
 SET Status = "On Hand"
 WHERE PartID IN (

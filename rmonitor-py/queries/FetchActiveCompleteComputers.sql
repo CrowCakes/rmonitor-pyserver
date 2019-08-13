@@ -12,5 +12,5 @@ INNER JOIN ParentList A
 ON P.PartListID = A.ListID 
 INNER JOIN Parts B 
 ON A.PartID = B.PartID
-WHERE D.DeliveryID = %(deliveryid)s AND R.Status = "Unavailable"
+WHERE D.DeliveryID = %(deliveryid)s AND R.Status = "Rental"
 ORDER BY L.RentalNumber, B.PartID ASC
